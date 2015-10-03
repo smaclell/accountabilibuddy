@@ -14,9 +14,6 @@ var domainRegex = new RegExp( "://([^/]+)" );
 var matches = siteUrl.match( domainRegex );
 var domain = matches[1];
 
-var site = document.getElementById( "site" );
-site.innerText = siteUrl;
-
 function goForward() {
 
   chrome.storage.sync.get( "allowedUrls", function(data) {
@@ -38,6 +35,13 @@ function goForward() {
   return false;
 }
 
-var forward = document.getElementById( "forward" );
-forward.onclick = "return false;";
-forward.addEventListener("click", goForward, false);
+function delayedConfigureHtml() {
+  var site = document.getElementById( "site" );
+  site.innerText = siteUrl;
+
+  var forward = document.getElementById( "forward" );
+  forward.onclick = "return false;";
+  forward.addEventListener("click", goForward, false);
+}
+
+document.addEventListener("DOMContentLoaded", delayedConfigureHtml, false);
