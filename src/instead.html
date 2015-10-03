@@ -4,11 +4,10 @@
     <style type="text/css">
       #prompt {
         margin: 10em auto 2em auto;
-        width: 600px;
+        width: 640px;
       }
       #wrapper {
         text-align: center;
-        overflow: hidden;
       }
       #picture { margin: 0px auto }
       .buttons {
@@ -22,13 +21,36 @@
       #forward {
         float: right;
       }
+
+      .arc-cont{
+        position:relative;
+        display:block;
+        margin:10px auto;
+        width:100%
+      }
+      .arc-cont:after{
+        padding-top:59%;
+        display:block;
+        content:""
+      }
+      .arc-cont > iframe{
+        position:absolute;
+        top:0;
+        bottom:0;
+        right:0;
+        left:0;
+        width:98%;
+        height:98%;
+        border:0
+      }
     </style>
     <script type="text/javascript" src="instead.js"></script>
   </head>
   <body>
     <div id="prompt">
       <figure id="wrapper">
-        <img id="picture" src="http://weknowyourdreams.com/images/jesus/jesus-09.jpg">
+        <div class="arc-cont"><iframe src="https://api.jesusfilmmedia.org/videoPlayerUrl?refId=1_529-jf6105-0-0&parentSessionId=560ffca54e8136.98120706&apiSessionId=5610424746b470.90551547&playerStyle=vanilla&player=bc.vanilla" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>
+        </div>
         <figcaption id="caption"></figcaption>
       </figure>
       <p>The site you are trying to go to <strong id="site">http://www.lolcats.com</strong> looks like a bad site.</p>
