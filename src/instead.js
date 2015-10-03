@@ -12,13 +12,25 @@ var site = document.getElementById( "site" );
 site.innerText = siteUrl;
 
 function goForward() {
-  var allowedUrls = JSON.parse( localStorage.allowedUrls );
-  allowedUrls[siteUrl] = {};
 
-  localStorage.allowedUrls = JSON.stringify( allowedUrls );
+  chrome.storage.sync.get( "allowedUrls", function(data) {
+    var updatedUrls = data.allowedUrls;
+    if( updatedUrls === undefined ) {
+      updatedUrls = {};
+    }
+
+    updatedUrls[siteUrl] = {};
+
+    chrome.storage.sync.set( { allowedUrls: updatedUrls }, function() {
+      location.href = siteUrl;
+    });
+
+  });
+
+  return false;
 }
 
 // TODO: Give them an hour on the site
 var forward = document.getElementById( "forward" );
-forward.href = siteUrl;
+forward.onclick = "return false;";
 forward.addEventListener("click", goForward, false);

@@ -17,6 +17,7 @@
   "permissions": [
     "activeTab",
     "history",
+    "storage",
     "webRequest",
     "webRequestBlocking",
     "*://*/*"

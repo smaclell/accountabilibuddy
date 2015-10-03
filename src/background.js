@@ -1,9 +1,49 @@
 var insteadUrl = chrome.extension.getURL( "instead.html" );
-if( !localStorage.allowedUrls ) {
-  localStorage.allowedUrls = "{}";
-}
+var allowedUrls = {};
 
-// Check for the block
+function noop() {}
+
+chrome.storage.sync.get( "allowedUrls", function(data) {
+  var remoteUrls = data.allowedUrls;
+  if( remoteUrls === undefined ) {
+    chrome.storage.sync.set( { allowedUrls: allowedUrls }, noop);
+    return;
+  }
+
+  for(var url in remoteUrls ) {
+    allowedUrls[url] = remoteUrls[url];
+  }
+});
+
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+  var changedUrls = changes.allowedUrls
+  if( changedUrls === undefined ) {
+    return;
+  }
+
+  changedUrls = changedUrls.newValue;
+  if( changedUrls === undefined ) {
+    return;
+  }
+
+  for(var url in changedUrls) {
+    var data = changedUrls[url];
+    allowedUrls[url] = data;
+
+    // TODO: What about aging things out? Removed items?
+    // TODO: Version the data in the urls to prevent races
+    /*
+    var localData = allowedUrls[url];
+    if( localData === undefined || ) {
+      allowedUrls[url] = data;
+    } else if( localData.version < data.version ) {
+      allowedUrls[url] = data;
+    }
+    */
+  }
+
+});
+
 
 function shouldBlockUrl( url ) {
   console.log( "Check " + url );
@@ -20,9 +60,7 @@ function shouldBlockUrl( url ) {
     return false;
   }
 
-  var allowedUrls = JSON.parse( localStorage.allowedUrls );
   var data = allowedUrls[url];
-  console.log(data);
   if( data !== undefined ) {
     console.log( "Already allowed")
     return false;
@@ -41,6 +79,9 @@ chrome.webRequest.onBeforeRequest.addListener(
       return {};
     }
   },
-  {urls: ["<all_urls>"]},
+  {
+    urls: ["<all_urls>"],
+    types: ["main_frame", "sub_frame", "image"]
+  },
   ["blocking"]
 );
