@@ -35,6 +35,11 @@ function goForward() {
   return false;
 }
 
+var verses = [
+  "Because of the Lord's great love we are not consumed, for his compassions never fail <em>Lamentations 3:22</em>",
+  "Above all else, guard your heart, for everything you do flow from it. <em>Proverbs 4:23</em>"
+];
+
 function delayedConfigureHtml() {
   var site = document.getElementById( "site" );
   site.innerText = siteUrl;
@@ -42,6 +47,10 @@ function delayedConfigureHtml() {
   var forward = document.getElementById( "forward" );
   forward.onclick = "return false;";
   forward.addEventListener("click", goForward, false);
+
+  var verse = document.getElementById( "verse" );
+  var lazyRand = (new Date().valueOf()) % verses.length;
+  verse.innerHTML = verses[ lazyRand ];
 }
 
 document.addEventListener("DOMContentLoaded", delayedConfigureHtml, false);
