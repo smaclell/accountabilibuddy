@@ -6,67 +6,47 @@ function noop() {}
 chrome.storage.sync.get( "allowedUrls", function(data) {
   var remoteUrls = data.allowedUrls;
   if( remoteUrls === undefined ) {
-    chrome.storage.sync.set( { allowedUrls: allowedUrls }, noop);
     return;
   }
 
-  for(var url in remoteUrls ) {
-    allowedUrls[url] = remoteUrls[url];
-  }
-});
+  allowedUrls = remoteUrls;
 
-chrome.storage.onChanged.addListener(function(changes, namespace) {
-  var changedUrls = changes.allowedUrls
-  if( changedUrls === undefined ) {
-    return;
-  }
-
-  changedUrls = changedUrls.newValue;
-  if( changedUrls === undefined ) {
-    return;
-  }
-
-  for(var url in changedUrls) {
-    var data = changedUrls[url];
-    allowedUrls[url] = data;
-
-    // TODO: What about aging things out? Removed items?
-    // TODO: Version the data in the urls to prevent races
-    /*
-    var localData = allowedUrls[url];
-    if( localData === undefined || ) {
-      allowedUrls[url] = data;
-    } else if( localData.version < data.version ) {
-      allowedUrls[url] = data;
+  chrome.storage.onChanged.addListener(function(changes, namespace) {
+    var changedUrls = changes.allowedUrls
+    if( changedUrls === undefined ) {
+      return;
     }
-    */
-  }
 
+    allowedUrls = changedUrls.newValue;
+  });
 });
 
+var domainRegex = new RegExp( "://([^/]+)" );
+var blockedDomains = {
+  "facebook.com" : {},
+  "www.lolcats.com" : {},
+  "netflix.com" : {}
+};
 
 function shouldBlockUrl( url ) {
-  console.log( "Check " + url );
-
   var alreadyRedirected = url.indexOf( insteadUrl ) !== -1;
   if( alreadyRedirected ) {
     return false;
   }
-  var hasLol = url.indexOf( "lol" ) !== -1;
 
-  var block = hasLol;
+  var matches = url.match( domainRegex );
+  var domain = matches[1];
+
+  var block = blockedDomains[domain] !== undefined;
   if( !block ) {
-    console.log( "Good" );
     return false;
   }
 
-  var data = allowedUrls[url];
+  var data = allowedUrls[domain];
   if( data !== undefined ) {
-    console.log( "Already allowed")
     return false;
   }
 
-  console.log( "BLOCKED" );
   return true;
 }
 

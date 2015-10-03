@@ -8,6 +8,10 @@ function getParameterByName(name) {
 
 var siteUrl = getParameterByName( "site" );
 
+var domainRegex = new RegExp( "://([^/]+)" );
+var matches = siteUrl.match( domainRegex );
+var domain = matches[1];
+
 var site = document.getElementById( "site" );
 site.innerText = siteUrl;
 
@@ -19,7 +23,7 @@ function goForward() {
       updatedUrls = {};
     }
 
-    updatedUrls[siteUrl] = {};
+    updatedUrls[domain] = {};
 
     chrome.storage.sync.set( { allowedUrls: updatedUrls }, function() {
       location.href = siteUrl;
