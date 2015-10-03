@@ -2,7 +2,7 @@
   <head>
     <title>Accountabilibuddy.</title>
     <style type="text/css">
-      #warning {
+      #prompt {
         margin: 10em auto 2em auto;
         width: 600px;
       }
@@ -10,15 +10,33 @@
         text-align: center;
         overflow: hidden;
       }
-      #wrapper img { margin: 0px auto }
+      #picture { margin: 0px auto }
+      .buttons {
+        clear: both;
+        padding: 0.5em 10em;
+      }
+
+      #away {
+        float: left;
+      }
+      #forward {
+        float: right;
+      }
     </style>
   </head>
   <body>
-    <div id="warning">
-      <div id="wrapper">
-        <img src="http://weknowyourdreams.com/images/jesus/jesus-09.jpg">
+    <div id="prompt">
+      <figure id="wrapper">
+        <img id="picture" src="http://weknowyourdreams.com/images/jesus/jesus-09.jpg">
+        <figcaption id="caption"></figcaption>
+      </figure>
+      <p>The site you are trying to go to <strong id="site">http://www.lolcats.com</strong> looks like a bad site.</p>
+      <p>Are you sure you want to go there?</p>
+      <div class="buttons">
+        <a id="away" href="https://www.youversion.com/">Find help</a>
+        <a id="forward" href="http://www.lolcats.com/">Proceed</a>
       </div>
-      <p class="message">The site you are trying to go to <strong id="site">http://www.lolcats.com</strong> looks like a bad site. <br /> Are you sure you want to go there?</p>
     </div>
+    <script type="text/javascript" src="instead.js"></script>
   </body>
 </html>

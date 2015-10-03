@@ -2,14 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
- chrome.webRequest.onBeforeRequest.addListener(
-  function(details) {
-    return {cancel: details.url.indexOf("://www.lol") != -1};
-  },
-  {urls: ["<all_urls>"]},
-  ["blocking"]
-);
-
 /**
  * Get the current URL.
  *

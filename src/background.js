@@ -1,10 +1,35 @@
 var insteadUrl = chrome.extension.getURL( "instead.html" );
+if( !localStorage.allowedUrls ) {
+  localStorage.allowedUrls = "{}";
+}
+
+// Check for the block
 
 function shouldBlockUrl( url ) {
-	var hasLol = url.indexOf( "lol" ) != -1;
-  var alreadyRedirected = url.indexOf( "?site=" ) != -1;
+  console.log( "Check " + url );
 
-  return !alreadyRedirected && hasLol;
+  var alreadyRedirected = url.indexOf( insteadUrl ) !== -1;
+  if( alreadyRedirected ) {
+    return false;
+  }
+  var hasLol = url.indexOf( "lol" ) !== -1;
+
+  var block = hasLol;
+  if( !block ) {
+    console.log( "Good" );
+    return false;
+  }
+
+  var allowedUrls = JSON.parse( localStorage.allowedUrls );
+  var data = allowedUrls[url];
+  console.log(data);
+  if( data !== undefined ) {
+    console.log( "Already allowed")
+    return false;
+  }
+
+  console.log( "BLOCKED" );
+  return true;
 }
 
 chrome.webRequest.onBeforeRequest.addListener(
