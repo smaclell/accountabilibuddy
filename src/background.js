@@ -1,8 +1,6 @@
 var insteadUrl = chrome.extension.getURL( "instead.html" );
 var allowedUrls = {};
 
-function noop() {}
-
 chrome.storage.sync.get( "allowedUrls", function(data) {
   var remoteUrls = data.allowedUrls;
   if( remoteUrls === undefined ) {
@@ -42,8 +40,10 @@ function shouldBlockUrl( url ) {
     return false;
   }
 
+  var now = new Date().valueOf();
+
   var data = allowedUrls[domain];
-  if( data !== undefined ) {
+  if( data !== undefined && data.timeoutMs !== undefined && now < data.timeoutMs ) {
     return false;
   }
 

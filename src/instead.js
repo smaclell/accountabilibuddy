@@ -6,6 +6,8 @@ function getParameterByName(name) {
   return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+var timeoutOffsetMs = 5 * 1000;
+
 var siteUrl = getParameterByName( "site" );
 
 var domainRegex = new RegExp( "://([^/]+)" );
@@ -23,7 +25,9 @@ function goForward() {
       updatedUrls = {};
     }
 
-    updatedUrls[domain] = {};
+    updatedUrls[domain] = {
+      timeoutMs: new Date().valueOf() + timeoutOffsetMs
+    };
 
     chrome.storage.sync.set( { allowedUrls: updatedUrls }, function() {
       location.href = siteUrl;
@@ -34,7 +38,6 @@ function goForward() {
   return false;
 }
 
-// TODO: Give them an hour on the site
 var forward = document.getElementById( "forward" );
 forward.onclick = "return false;";
 forward.addEventListener("click", goForward, false);
