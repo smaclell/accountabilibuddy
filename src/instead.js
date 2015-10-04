@@ -27,7 +27,9 @@ function goForward() {
     };
 
     chrome.storage.sync.set( { allowedUrls: updatedUrls }, function() {
-      location.href = siteUrl;
+      chrome.runtime.sendMessage('update', function () {
+        location.href = siteUrl;
+      });
     });
 
   });

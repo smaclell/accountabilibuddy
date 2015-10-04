@@ -1,23 +1,37 @@
 var insteadUrl = chrome.extension.getURL( "instead.html" );
 var allowedUrls = {};
 
-chrome.storage.sync.get( "allowedUrls", function(data) {
-  var remoteUrls = data.allowedUrls;
-  if( remoteUrls === undefined ) {
-    return;
-  }
-
-  allowedUrls = remoteUrls;
-
-  chrome.storage.onChanged.addListener(function(changes, namespace) {
-    var changedUrls = changes.allowedUrls
-    if( changedUrls === undefined ) {
+function syncBlockedDomains () {
+  chrome.storage.sync.get( "allowedUrls", function(data) {
+    var remoteUrls = data.allowedUrls;
+    if( remoteUrls === undefined ) {
       return;
     }
 
-    allowedUrls = changedUrls.newValue;
+    allowedUrls = remoteUrls;
+
+    chrome.storage.onChanged.addListener(function(changes, namespace) {
+      var changedUrls = changes.allowedUrls
+      if( changedUrls === undefined ) {
+        return;
+      }
+
+      allowedUrls = changedUrls.newValue;
+    });
   });
-});
+}
+
+syncBlockedDomains();
+
+chrome.runtime.onMessage.addListener(function (message, sender, respond) {
+  switch(message) {
+    case 'update': {
+      syncBlockedDomains();
+      break;
+    }
+  }
+  respond();
+})
 
 var domainRegex = new RegExp( "://([^/]+)" );
 var blockedDomains = {
