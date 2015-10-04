@@ -23,11 +23,11 @@ chrome.storage.sync.get( ["allowedUrls", "blockedDomains"], function(data) {
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
   if( changes.allowedUrls !== undefined ) {
-    allowedUrls = changedUrls.allowedUrls.newValue;
+    allowedUrls = changes.allowedUrls.newValue;
   }
 
   if( changes.blockedDomains !== undefined ) {
-    blockedDomains = changedUrls.allowedUrls.newValue;
+    blockedDomains = changes.allowedUrls.newValue;
   }
 });
 
