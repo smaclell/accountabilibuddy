@@ -1,22 +1,25 @@
 var insteadUrl = chrome.extension.getURL( "instead.html" );
-var allowedUrls = {};
+var allowedUrls;
 
 chrome.storage.sync.get( "allowedUrls", function(data) {
+  if (allowedUrls) {
+    return;
+  }
   var remoteUrls = data.allowedUrls;
   if( remoteUrls === undefined ) {
     return;
   }
 
   allowedUrls = remoteUrls;
+});
 
-  chrome.storage.onChanged.addListener(function(changes, namespace) {
-    var changedUrls = changes.allowedUrls
-    if( changedUrls === undefined ) {
-      return;
-    }
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+  var changedUrls = changes.allowedUrls
+  if( changedUrls === undefined ) {
+    return;
+  }
 
-    allowedUrls = changedUrls.newValue;
-  });
+  allowedUrls = changedUrls.newValue;
 });
 
 var domainRegex = new RegExp( "://([^/]+)" );
@@ -42,7 +45,7 @@ function shouldBlockUrl( url ) {
 
   var now = new Date().valueOf();
 
-  var data = allowedUrls[domain];
+  var data = allowedUrls && allowedUrls[domain];
   if( data !== undefined && data.timeoutMs !== undefined && now < data.timeoutMs ) {
     return false;
   }
