@@ -12,11 +12,11 @@ chrome.storage.sync.get( ["allowedUrls", "blockedDomains"], function(data) {
     if( data.blockedDomains !== undefined ) {
       blockedDomains = data.blockedDomains;
     } else {
-      blockedDomains = {
-        "facebook.com" : {},
-        "www.lolcats.com" : {},
-        "netflix.com" : {}
-      };
+      blockedDomains = [
+        { pattern: "facebook" },
+        { pattern: "lolcats" },
+        { pattern: "netflix" }
+      ];
     }
   }
 });
@@ -27,11 +27,26 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
   }
 
   if( changes.blockedDomains !== undefined ) {
-    blockedDomains = changes.allowedUrls.newValue;
+    blockedDomains = changes.blockedDomains.newValue;
   }
 });
 
 var domainRegex = new RegExp( "://([^/]+)" );
+
+function findFirstBlockedDomain( domain ) {
+  for(var i = 0; i < blockedDomains.length; i++) {
+    var domainData = blockedDomains[i];
+    if( domain.indexOf( domainData.pattern ) !== -1 ) {
+      return {
+        block: true,
+        domain: domain,
+        pattern: domainData.pattern
+      };
+    }
+  }
+
+  return { block: false };
+}
 
 function shouldBlockUrl( url ) {
   var alreadyRedirected = url.indexOf( insteadUrl ) !== -1;
@@ -46,8 +61,9 @@ function shouldBlockUrl( url ) {
   var matches = url.match( domainRegex );
   var domain = matches[1];
 
-  var block = blockedDomains[domain] !== undefined;
-  if( !block ) {
+  // TODO: Save the pattern to allow not the block
+  var blockData = findFirstBlockedDomain( domain );
+  if( !blockData.block ) {
     return false;
   }
 
