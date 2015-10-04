@@ -1,16 +1,24 @@
 var insteadUrl = chrome.extension.getURL( "instead.html" );
 var allowedUrls;
+var blockedDomains;
 
-chrome.storage.sync.get( "allowedUrls", function(data) {
-  if (allowedUrls) {
-    return;
-  }
-  var remoteUrls = data.allowedUrls;
-  if( remoteUrls === undefined ) {
-    return;
+chrome.storage.sync.get( ["allowedUrls", "blockedDomains"], function(data) {
+
+  if( allowedUrls === undefined && data.allowedUrls !== undefined ) {
+    allowedUrls = data.allowedUrls;
   }
 
-  allowedUrls = remoteUrls;
+  if( blockedDomains === undefined ) {
+    if( data.blockedDomains ) {
+      blockedDomains = data.blockedDomains;
+    } else {
+      blockedDomains = {
+        "facebook.com" : {},
+        "www.lolcats.com" : {},
+        "netflix.com" : {}
+      };
+    }
+  }
 });
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
@@ -23,15 +31,14 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
 });
 
 var domainRegex = new RegExp( "://([^/]+)" );
-var blockedDomains = {
-  "facebook.com" : {},
-  "www.lolcats.com" : {},
-  "netflix.com" : {}
-};
 
 function shouldBlockUrl( url ) {
   var alreadyRedirected = url.indexOf( insteadUrl ) !== -1;
   if( alreadyRedirected ) {
+    return false;
+  }
+
+  if( blockedDomains === undefined ) {
     return false;
   }
 
