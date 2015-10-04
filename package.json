@@ -1,0 +1,24 @@
+{
+  "name": "accountabilibuddy-chrome",
+  "version": "1.0.0",
+  "description": "Work in progress. We will fill this in later.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smaclell/accountabilibuddy-chrome.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/smaclell/accountabilibuddy-chrome/issues"
+  },
+  "homepage": "https://github.com/smaclell/accountabilibuddy-chrome#readme",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-react": "^3.0.1",
+    "react": "^0.13.3",
+    "react-tools": "^0.13.3"
+  }
+}
