@@ -22,12 +22,13 @@ chrome.storage.sync.get( ["allowedUrls", "blockedDomains"], function(data) {
 });
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
-  var changedUrls = changes.allowedUrls
-  if( changedUrls === undefined ) {
-    return;
+  if( changes.allowedUrls !== undefined ) {
+    allowedUrls = changedUrls.allowedUrls.newValue;
   }
 
-  allowedUrls = changedUrls.newValue;
+  if( changes.blockedDomains !== undefined ) {
+    blockedDomains = changedUrls.allowedUrls.newValue;
+  }
 });
 
 var domainRegex = new RegExp( "://([^/]+)" );
