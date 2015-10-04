@@ -6,7 +6,7 @@ function getParameterByName(name) {
   return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-var timeoutOffsetMs = 5 * 1000;
+var timeoutOffsetMs = 15 * 1000;
 
 var siteUrl = getParameterByName( "site" );
 
