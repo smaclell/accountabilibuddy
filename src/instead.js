@@ -36,8 +36,34 @@ function goForward() {
 }
 
 var verses = [
-  "Because of the Lord's great love we are not consumed, for his compassions never fail <em>Lamentations 3:22</em>",
-  "Above all else, guard your heart, for everything you do flow from it. <em>Proverbs 4:23</em>"
+  {
+    text: "Because of the Lord's great love we are not consumed, for his compassions never fail",
+    location: "Lamentations 3:22"
+  },
+  {
+    text: "Above all else, guard your heart, for everything you do flow from it.",
+    location: "Proverbs 4:23"
+  },
+  {
+    text: "But each person is tempted when he is lured and enticed by his own desire.",
+    location: "James 1:14"
+  },
+  {
+    text: "I can do all things through him who strengthens me.",
+    location: "Philippians 4:13"
+  },
+  {
+    text: "Therefore, confess your sins to one another and pray for one another, that you might be healed. The prayer of a righteous person has great power as it is working.",
+    location: "James 5:16"
+  },
+  {
+    text: "Flee from sexual immorality. Every other sin a person commits is outside the body, but the sexually immoral person sins against his own body.",
+    location: "1 Corinthians 6:18"
+  },
+  {
+    text: "Therefore, my beloved, flee from idolatry.",
+    location: "1 Corinthians 10:14"
+  }
 ];
 
 function delayedConfigureHtml() {
@@ -49,8 +75,17 @@ function delayedConfigureHtml() {
   forward.addEventListener("click", goForward, false);
 
   var verse = document.getElementById( "verse" );
-  var lazyRand = (new Date().valueOf()) % verses.length;
-  verse.innerHTML = verses[ lazyRand ];
+  var verseNumber = Math.floor(Math.random() * verses.length);
+  var verseData = verses[ verseNumber ];
+  verse.innerHTML = "<span>" +
+    verseData.text +
+    "</span>" +
+    " - " +
+    "<a href=\"https://www.biblegateway.com/passage/?version=ESV&search=" +
+    encodeURIComponent( verseData.location ) +
+    "\">" +
+    verseData.location +
+    "</a>";
 }
 
 document.addEventListener("DOMContentLoaded", delayedConfigureHtml, false);
