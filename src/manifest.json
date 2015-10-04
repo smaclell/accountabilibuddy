@@ -11,14 +11,14 @@
   },
 
   "browser_action": {
-    "default_icon": "holyclick-48x48.png",
+    "default_icon": "holyclick-48x48-black.png",
     "default_popup": "popup.html"
   },
 
   "icons": {
     "16": "holyclick-16x16-black.png",
-    "48": "holyclick-48x48.png",
-    "128": "holyclick-128x128.png"
+    "48": "holyclick-48x48-black.png",
+    "128": "holyclick-128x128-black.png"
   },
 
   "permissions": [
