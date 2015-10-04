@@ -19,10 +19,24 @@
 	  - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
 	 -->
 	 <!-- http://www.chucknorris.com/Christian/index.htm -->
-	<script src="popup.js"></script>
 	</head>
 	<body>
-		<p>Hello World</p>
-		<div id="status"></div>
+		<form id="addBlockedDomain">
+			<label>
+				Domain to block
+				<input name="pattern" type="text"/>
+			</label>
+			<input name="add-blocked-domain" value="Add Blocked Domain" type="submit" />
+		</form>
+
+		<form id="removeBlockedDomain">
+			<input name="pattern" list="patterns" />
+			<datalist id="patterns">
+			</datalist>
+
+			<input name="remove-blocked-domain" value="Remove Blocked Domain" type="submit" />
+		</form>
+
+	<script src="popup.js"></script>
 	</body>
 </html>
