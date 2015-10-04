@@ -1,33 +1,52 @@
 var insteadUrl = chrome.extension.getURL( "instead.html" );
-var allowedUrls;
+var allowances;
+var blockedDomains;
 
-chrome.storage.sync.get( "allowedUrls", function(data) {
-  if (allowedUrls) {
-    return;
-  }
-  var remoteUrls = data.allowedUrls;
-  if( remoteUrls === undefined ) {
-    return;
+chrome.storage.sync.get( ["allowances", "blockedDomains"], function(data) {
+
+  if( allowances === undefined && data.allowances !== undefined ) {
+    allowances = data.allowances;
   }
 
-  allowedUrls = remoteUrls;
+  if( blockedDomains === undefined ) {
+    if( data.blockedDomains !== undefined ) {
+      blockedDomains = data.blockedDomains;
+    } else {
+      blockedDomains = [
+        { pattern: "facebook" },
+        { pattern: "lolcats" },
+        { pattern: "netflix" }
+      ];
+    }
+  }
 });
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
-  var changedUrls = changes.allowedUrls
-  if( changedUrls === undefined ) {
-    return;
+  if( changes.allowances !== undefined ) {
+    allowances = changes.allowances.newValue;
   }
 
-  allowedUrls = changedUrls.newValue;
+  if( changes.blockedDomains !== undefined ) {
+    blockedDomains = changes.blockedDomains.newValue;
+  }
 });
 
 var domainRegex = new RegExp( "://([^/]+)" );
-var blockedDomains = {
-  "facebook.com" : {},
-  "www.lolcats.com" : {},
-  "netflix.com" : {}
-};
+
+function findFirstBlockedDomain( domain ) {
+  for(var i = 0; i < blockedDomains.length; i++) {
+    var domainData = blockedDomains[i];
+    if( domain.indexOf( domainData.pattern ) !== -1 ) {
+      return {
+        block: true,
+        domain: domain,
+        pattern: domainData.pattern
+      };
+    }
+  }
+
+  return { block: false };
+}
 
 function shouldBlockUrl( url ) {
   var alreadyRedirected = url.indexOf( insteadUrl ) !== -1;
@@ -35,18 +54,28 @@ function shouldBlockUrl( url ) {
     return false;
   }
 
-  var matches = url.match( domainRegex );
-  var domain = matches[1];
-
-  var block = blockedDomains[domain] !== undefined;
-  if( !block ) {
+  if( blockedDomains === undefined ) {
     return false;
   }
 
-  var now = new Date().valueOf();
+  var matches = url.match( domainRegex );
+  var domain = matches[1];
 
-  var data = allowedUrls && allowedUrls[domain];
-  if( data !== undefined && data.timeoutMs !== undefined && now < data.timeoutMs ) {
+  var blockData = findFirstBlockedDomain( domain );
+  if( !blockData.block ) {
+    return false;
+  }
+
+  if( allowances === undefined ) {
+    return true;
+  }
+
+  if( allowances.timeoutMs === undefined ) {
+    return true
+  }
+
+  var now = new Date().valueOf();
+  if( now < allowances.timeoutMs ) {
     return false;
   }
 

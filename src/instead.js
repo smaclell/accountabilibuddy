@@ -6,7 +6,7 @@ function getParameterByName(name) {
   return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-var timeoutOffsetMs = 5 * 1000;
+var timeoutOffsetMs = 15 * 1000;
 
 var siteUrl = getParameterByName( "site" );
 
@@ -16,17 +16,15 @@ var domain = matches[1];
 
 function goForward() {
 
-  chrome.storage.sync.get( "allowedUrls", function(data) {
-    var updatedUrls = data.allowedUrls;
-    if( updatedUrls === undefined ) {
-      updatedUrls = {};
+  chrome.storage.sync.get( "allowances", function(data) {
+    var allowances = data.allowances;
+    if( allowances === undefined ) {
+      allowances = {};
     }
 
-    updatedUrls[domain] = {
-      timeoutMs: new Date().valueOf() + timeoutOffsetMs
-    };
+    allowances.timeoutMs = new Date().valueOf() + timeoutOffsetMs;
 
-    chrome.storage.sync.set( { allowedUrls: updatedUrls }, function() {
+    chrome.storage.sync.set( { allowances: allowances }, function() {
       location.href = siteUrl;
     });
 
