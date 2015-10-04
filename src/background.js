@@ -1,11 +1,11 @@
 var insteadUrl = chrome.extension.getURL( "instead.html" );
-var allowedUrls;
+var allowances;
 var blockedDomains;
 
-chrome.storage.sync.get( ["allowedUrls", "blockedDomains"], function(data) {
+chrome.storage.sync.get( ["allowances", "blockedDomains"], function(data) {
 
-  if( allowedUrls === undefined && data.allowedUrls !== undefined ) {
-    allowedUrls = data.allowedUrls;
+  if( allowances === undefined && data.allowances !== undefined ) {
+    allowances = data.allowances;
   }
 
   if( blockedDomains === undefined ) {
@@ -22,8 +22,8 @@ chrome.storage.sync.get( ["allowedUrls", "blockedDomains"], function(data) {
 });
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
-  if( changes.allowedUrls !== undefined ) {
-    allowedUrls = changes.allowedUrls.newValue;
+  if( changes.allowances !== undefined ) {
+    allowances = changes.allowances.newValue;
   }
 
   if( changes.blockedDomains !== undefined ) {
@@ -61,16 +61,21 @@ function shouldBlockUrl( url ) {
   var matches = url.match( domainRegex );
   var domain = matches[1];
 
-  // TODO: Save the pattern to allow not the block
   var blockData = findFirstBlockedDomain( domain );
   if( !blockData.block ) {
     return false;
   }
 
-  var now = new Date().valueOf();
+  if( allowances === undefined ) {
+    return true;
+  }
 
-  var data = allowedUrls && allowedUrls[domain];
-  if( data !== undefined && data.timeoutMs !== undefined && now < data.timeoutMs ) {
+  if( allowances.timeoutMs === undefined ) {
+    return true
+  }
+
+  var now = new Date().valueOf();
+  if( now < allowances.timeoutMs ) {
     return false;
   }
 
