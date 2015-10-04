@@ -9,7 +9,7 @@ chrome.storage.sync.get( ["allowedUrls", "blockedDomains"], function(data) {
   }
 
   if( blockedDomains === undefined ) {
-    if( data.blockedDomains ) {
+    if( data.blockedDomains !== undefined ) {
       blockedDomains = data.blockedDomains;
     } else {
       blockedDomains = {
